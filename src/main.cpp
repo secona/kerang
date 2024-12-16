@@ -4,7 +4,9 @@
 #include <sstream>
 #include <vector>
 #include <sys/wait.h>
+
 #include "builtins.hpp"
+#include "main.hpp"
 
 std::string get_prompt() {
 	std::string username = getlogin();
