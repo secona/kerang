@@ -1,10 +1,10 @@
 #include <iostream>
 #include <string>
 #include <signal.h>
-#include <sstream>
 #include <vector>
 #include <sys/wait.h>
 
+#include "parser/parser.hpp"
 #include "builtins.hpp"
 #include "main.hpp"
 
@@ -28,15 +28,6 @@ void handle_sigint(int sig)
 	std::cout << std::endl << "Use 'exit' or Ctrl+D to quit the shell." << std::endl;
 	std::cout << get_prompt();
 	std::cout.flush();
-}
-
-void parse_input(const std::string &input, std::vector<std::string> &args)
-{
-	std::istringstream stream(input);
-	std::string token;
-	while (stream >> token) {
-		args.push_back(token);
-	}
 }
 
 void execute_command(const std::vector<std::string> &args)
