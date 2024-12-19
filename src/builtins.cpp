@@ -1,8 +1,3 @@
-#include <vector>
-#include <string>
-#include <bits/stdc++.h>
-#include <memory>
-
 #include "builtins.hpp"
 
 int ExitCommand::execute_command(const std::vector<std::string> &args)
@@ -10,8 +5,21 @@ int ExitCommand::execute_command(const std::vector<std::string> &args)
 	return SHOULD_EXIT;
 }
 
-CommandManager::CommandManager() {
+int ChangeDirectoryCommand::execute_command(const std::vector<std::string> &args)
+{
+	std::string path = args[1].c_str();
+
+	if (chdir(args[1].c_str()) != 0) {
+		std::cerr << strerror(errno) << " (error: " << errno << ")" << std::endl;
+	}
+
+	return OK;
+}
+
+CommandManager::CommandManager()
+{
 	this->commands["exit"] = std::make_unique<ExitCommand>();
+	this->commands["cd"] = std::make_unique<ChangeDirectoryCommand>();
 }
 
 int CommandManager::execute_command(const std::vector<std::string> &args)
