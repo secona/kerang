@@ -61,8 +61,7 @@ int main()
 			continue;
 		}
 
-		std::vector<std::string> args;
-		parse_input(input, args);
+		std::vector<std::string> args = parse_input(input);
 
 		int result = cm.execute_command(args);
 

@@ -1,13 +1,10 @@
 #include <sstream>
 
 #include "parser.hpp"
+#include "tokenizer.hpp"
 
-void parse_input(const std::string &input, std::vector<std::string> &args)
+std::vector<std::string> parse_input(const std::string &input)
 {
-	std::istringstream stream(input);
-	std::string token;
-	while (stream >> token) {
-		args.push_back(token);
-	}
+	return tokenize(input);
 }
 
