@@ -4,8 +4,8 @@
 #include <vector>
 #include <sys/wait.h>
 
-#include "parser/parser.hpp"
-#include "builtins.hpp"
+#include "parser/lib.hpp"
+#include "commands/lib.hpp"
 #include "main.hpp"
 
 std::string get_prompt() {
