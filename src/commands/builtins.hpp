@@ -1,3 +1,6 @@
+#ifndef KERANG_COMMANDS_BUILTINS_HPP_
+#define KERANG_COMMANDS_BUILTINS_HPP_
+
 #include <vector>
 #include <string>
 #include <bits/stdc++.h>
@@ -23,3 +26,5 @@ class ChangeDirectoryCommand : public BuiltinCommand {
 public:
 	int execute_command(const std::vector<std::string> &args) override;
 };
+
+#endif
