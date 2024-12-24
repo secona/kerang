@@ -37,6 +37,7 @@
         buildInputs = [
           pkgs.cmake
           pkgs.gcc
+          pkgs.gtest
         ];
       };
     });
