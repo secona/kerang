@@ -29,6 +29,27 @@ std::vector<Token> Tokenizer::tokenize()
 			break;
 		}
 
+		if (current == '>') {
+			this->advance();
+
+			if (this->peek() == '>') {
+				this->advance();
+				tokens.emplace_back(TokenType::Redirection, ">>");
+			} else {
+				tokens.emplace_back(TokenType::Redirection, ">");
+			}
+
+			continue;
+		}
+
+		if (current == '|') {
+			this->advance();
+
+			tokens.emplace_back(TokenType::Pipe, "|");
+
+			continue;
+		}
+
 		if (current == '"') {
 			tokens.emplace_back(this->read_quoted());
 			continue;
