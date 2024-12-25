@@ -1,129 +1,87 @@
 #include <gtest/gtest.h>
 #include "tokenizer.hpp"
 
-TEST(TokenizerTests, TestWordsAndQuotes) {
-	Tokenizer tokenizer("echo \"Hello, World!\"");
-	std::vector<Token> tokens = tokenizer.tokenize();
+class TokenizerTests : public ::testing::Test {
+protected:
+    struct ExpectedToken
+    {
+        TokenType type;
+        std::string value;
+        
+        ExpectedToken(TokenType t, const std::string& v) 
+            : type(t), value(v) {}
+    };
 
-	EXPECT_EQ(tokens[0].type, TokenType::Word);
-	EXPECT_STREQ(tokens[0].value.c_str(), "echo");
+    void verify_tokens(const std::string& input, const std::vector<ExpectedToken>& expected)
+    {
+        Tokenizer tokenizer(input);
+		std::vector<Token> tokens = tokenizer.tokenize();
+        ASSERT_EQ(tokens.size(), expected.size());
+        
+        for (size_t i = 0; i < tokens.size(); i++) {
+            EXPECT_EQ(tokens[i].type, expected[i].type)
+                << "Token " << i << " type mismatch";
+            EXPECT_STREQ(tokens[i].value.c_str(), expected[i].value.c_str())
+                << "Token " << i << " value mismatch";
+        }
+    }
+};
 
-	EXPECT_EQ(tokens[1].type, TokenType::Word);
-	EXPECT_STREQ(tokens[1].value.c_str(), "Hello, World!");
+TEST_F(TokenizerTests, HandlesQuotedStrings) {
+    verify_tokens("echo \"Hello, World!\"", {
+        {TokenType::Word, "echo"},
+        {TokenType::Word, "Hello, World!"}
+    });
+    
+    verify_tokens("echo \">>\"", {
+        {TokenType::Word, "echo"},
+        {TokenType::Word, ">>"}
+    });
 }
 
-TEST(TokenizerTests, TestQuotedRedirect) {
-	Tokenizer tokenizer("echo \">>\"");
-	std::vector<Token> tokens = tokenizer.tokenize();
-
-	EXPECT_EQ(tokens[0].type, TokenType::Word);
-	EXPECT_STREQ(tokens[0].value.c_str(), "echo");
-
-	EXPECT_EQ(tokens[1].type, TokenType::Word);
-	EXPECT_STREQ(tokens[1].value.c_str(), ">>");
+TEST_F(TokenizerTests, HandlesRedirection) {
+    verify_tokens("ls -al >> test.txt", {
+        {TokenType::Word, "ls"},
+        {TokenType::Word, "-al"},
+        {TokenType::Redirection, ">>"},
+        {TokenType::Word, "test.txt"}
+    });
+    
+    verify_tokens("ls -al>cat.txt", {
+        {TokenType::Word, "ls"},
+        {TokenType::Word, "-al"},
+        {TokenType::Redirection, ">"},
+        {TokenType::Word, "cat.txt"}
+    });
+    
+    verify_tokens("ls -al 2>> cat.txt", {
+        {TokenType::Word, "ls"},
+        {TokenType::Word, "-al"},
+        {TokenType::Redirection, "2>>"},
+        {TokenType::Word, "cat.txt"}
+    });
+    
+    verify_tokens("ls -al2>> cat.txt", {
+        {TokenType::Word, "ls"},
+        {TokenType::Word, "-al2"},
+        {TokenType::Redirection, ">>"},
+        {TokenType::Word, "cat.txt"}
+    });
 }
 
-TEST(TokenizerTests, TestOutputRedirect) {
-	Tokenizer tokenizer("ls -al >> test.txt");
-	std::vector<Token> tokens = tokenizer.tokenize();
-
-	EXPECT_EQ(tokens[0].type, TokenType::Word);
-	EXPECT_STREQ(tokens[0].value.c_str(), "ls");
-
-	EXPECT_EQ(tokens[1].type, TokenType::Word);
-	EXPECT_STREQ(tokens[1].value.c_str(), "-al");
-
-	EXPECT_EQ(tokens[2].type, TokenType::Redirection);
-	EXPECT_STREQ(tokens[2].value.c_str(), ">>");
-
-	EXPECT_EQ(tokens[3].type, TokenType::Word);
-	EXPECT_STREQ(tokens[3].value.c_str(), "test.txt");
-}
-
-TEST(TokenizerTests, TestPipe) {
-	Tokenizer tokenizer("ls -al | grep main.cpp");
-	std::vector<Token> tokens = tokenizer.tokenize();
-
-	EXPECT_EQ(tokens[0].type, TokenType::Word);
-	EXPECT_STREQ(tokens[0].value.c_str(), "ls");
-
-	EXPECT_EQ(tokens[1].type, TokenType::Word);
-	EXPECT_STREQ(tokens[1].value.c_str(), "-al");
-
-	EXPECT_EQ(tokens[2].type, TokenType::Pipe);
-	EXPECT_STREQ(tokens[2].value.c_str(), "|");
-
-	EXPECT_EQ(tokens[3].type, TokenType::Word);
-	EXPECT_STREQ(tokens[3].value.c_str(), "grep");
-
-	EXPECT_EQ(tokens[4].type, TokenType::Word);
-	EXPECT_STREQ(tokens[4].value.c_str(), "main.cpp");
-}
-
-TEST(TokenizerTests, TestOutputRedirectNoSpaces) {
-	Tokenizer tokenizer("ls -al>cat.txt");
-	auto tokens = tokenizer.tokenize();
-
-	EXPECT_EQ(tokens[0].type, TokenType::Word);
-	EXPECT_STREQ(tokens[0].value.c_str(), "ls");
-
-	EXPECT_EQ(tokens[1].type, TokenType::Word);
-	EXPECT_STREQ(tokens[1].value.c_str(), "-al");
-
-	EXPECT_EQ(tokens[2].type, TokenType::Redirection);
-	EXPECT_STREQ(tokens[2].value.c_str(), ">");
-
-	EXPECT_EQ(tokens[3].type, TokenType::Word);
-	EXPECT_STREQ(tokens[3].value.c_str(), "cat.txt");
-}
-
-TEST(TokenizerTests, TestOutputPipeNoSpaces) {
-	Tokenizer tokenizer("ls -al|cat.txt");
-	auto tokens = tokenizer.tokenize();
-
-	EXPECT_EQ(tokens[0].type, TokenType::Word);
-	EXPECT_STREQ(tokens[0].value.c_str(), "ls");
-
-	EXPECT_EQ(tokens[1].type, TokenType::Word);
-	EXPECT_STREQ(tokens[1].value.c_str(), "-al");
-
-	EXPECT_EQ(tokens[2].type, TokenType::Pipe);
-	EXPECT_STREQ(tokens[2].value.c_str(), "|");
-
-	EXPECT_EQ(tokens[3].type, TokenType::Word);
-	EXPECT_STREQ(tokens[3].value.c_str(), "cat.txt");
-}
-
-TEST(TokenizerTests, TestOutputRedirectFD) {
-	Tokenizer tokenizer("ls -al 2>> cat.txt");
-	auto tokens = tokenizer.tokenize();
-
-	EXPECT_EQ(tokens[0].type, TokenType::Word);
-	EXPECT_STREQ(tokens[0].value.c_str(), "ls");
-
-	EXPECT_EQ(tokens[1].type, TokenType::Word);
-	EXPECT_STREQ(tokens[1].value.c_str(), "-al");
-
-	EXPECT_EQ(tokens[2].type, TokenType::Redirection);
-	EXPECT_STREQ(tokens[2].value.c_str(), "2>>");
-
-	EXPECT_EQ(tokens[3].type, TokenType::Word);
-	EXPECT_STREQ(tokens[3].value.c_str(), "cat.txt");
-}
-
-TEST(TokenizerTests, TestOutputRedirectNoSpacesFD) {
-	Tokenizer tokenizer("ls -al2>> cat.txt");
-	auto tokens = tokenizer.tokenize();
-
-	EXPECT_EQ(tokens[0].type, TokenType::Word);
-	EXPECT_STREQ(tokens[0].value.c_str(), "ls");
-
-	EXPECT_EQ(tokens[1].type, TokenType::Word);
-	EXPECT_STREQ(tokens[1].value.c_str(), "-al2");
-
-	EXPECT_EQ(tokens[2].type, TokenType::Redirection);
-	EXPECT_STREQ(tokens[2].value.c_str(), ">>");
-
-	EXPECT_EQ(tokens[3].type, TokenType::Word);
-	EXPECT_STREQ(tokens[3].value.c_str(), "cat.txt");
+TEST_F(TokenizerTests, HandlesPipes) {
+    verify_tokens("ls -al | grep main.cpp", {
+        {TokenType::Word, "ls"},
+        {TokenType::Word, "-al"},
+        {TokenType::Pipe, "|"},
+        {TokenType::Word, "grep"},
+        {TokenType::Word, "main.cpp"}
+    });
+    
+    verify_tokens("ls -al|cat.txt", {
+        {TokenType::Word, "ls"},
+        {TokenType::Word, "-al"},
+        {TokenType::Pipe, "|"},
+        {TokenType::Word, "cat.txt"}
+    });
 }
