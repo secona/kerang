@@ -8,7 +8,6 @@ enum TokenType {
 	Word,
 	Redirection,
 	Pipe,
-	QuotedString,
 	EndOfFile
 };
 
@@ -32,7 +31,7 @@ private:
 	char peek();
 	char advance();
 
-	Token read_string();
+	Token read_quoted();
 	Token read_word();
 };
 

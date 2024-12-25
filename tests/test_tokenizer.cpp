@@ -8,7 +8,7 @@ TEST(SampleTest, TestCase) {
 	EXPECT_EQ(tokens[0].type, TokenType::Word);
 	EXPECT_STREQ(tokens[0].value.c_str(), "echo");
 
-	EXPECT_EQ(tokens[1].type, TokenType::QuotedString);
+	EXPECT_EQ(tokens[1].type, TokenType::Word);
 	EXPECT_STREQ(tokens[1].value.c_str(), "Hello, World!");
 }
 
