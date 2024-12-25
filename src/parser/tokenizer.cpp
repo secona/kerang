@@ -1,51 +1,68 @@
 #include "tokenizer.hpp"
 
-std::string read_keyword(const std::string &input, int &i)
+Token::Token(TokenType type, const std::string &value): type(type), value(value) {}
+
+Tokenizer::Tokenizer(const std::string &input): input(input), pos(0) {}
+
+char Tokenizer::peek()
 {
-	std::string result;
-
-	while (i < input.length() && !isspace(input.at(i))) {
-		result.push_back(input.at(i));
-		++i;
-	}
-
-	return result;
+	return this->pos < this->input.size() ? this->input[this->pos] : 0;
 }
 
-std::string read_string(const std::string &input, int &i)
+char Tokenizer::advance()
 {
-	std::string result;
-	++i;
-
-	while (i < input.length() && input.at(i) != '"') {
-		result.push_back(input.at(i));
-		++i;
-	}
-
-	if (i < input.length() && input.at(i) == '"') {
-		++i;
-    }
-
-	return result;
+	return this->pos < this->input.size() ? this->input[this->pos++] : 0;
 }
 
-std::vector<std::string> tokenize(const std::string &input)
+std::vector<Token> Tokenizer::tokenize()
 {
-	int i { 0 };
-	std::vector<std::string> tokens;
+	std::vector<Token> tokens;
 
-	while (i < input.length()) {
-		while (i < input.length() && isspace(input.at(i))) ++i;
-		if (i >= input.length()) break;
-
-		if (input.at(i) == '"') {
-			std::string str = read_string(input, i);
-			tokens.push_back(str);
-		} else {
-			std::string keyword = read_keyword(input, i);
-			tokens.push_back(keyword);
+	while (this->pos < this->input.size()) {
+		while (std::isspace(this->peek())) {
+			this->advance();
 		}
+
+		char current = peek();
+
+		if (current == 0) {
+			break;
+		}
+
+		if (current == '"') {
+			tokens.emplace_back(this->read_string());
+			continue;
+		}
+
+		tokens.emplace_back(this->read_word());
 	}
 
 	return tokens;
+}
+
+Token Tokenizer::read_string()
+{
+	char quote = this->advance();
+	std::string str;
+
+	while (this->peek() != quote && this->peek() != 0) {
+		str += this->advance();
+	}
+
+	if (this->peek() == quote) {
+		this->advance();
+	}
+
+	return Token(TokenType::QuotedString, str);
+}
+
+Token Tokenizer::read_word()
+{
+	std::string word;
+
+	while (!std::isspace(this->peek()) && this->peek() != 0) {
+		word += this->advance();
+	}
+
+	return Token(TokenType::Word, word);
 }
