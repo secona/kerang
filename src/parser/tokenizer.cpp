@@ -29,6 +29,27 @@ std::vector<Token> Tokenizer::tokenize()
 			break;
 		}
 
+		if (std::isdigit(current)) {
+			this->advance();
+
+			if (this->peek() == '>') {
+				this->advance();
+
+				if (this->peek() == '>') {
+					this->advance();
+					std::string value = ">>";
+					value.insert(value.begin(), current);
+					tokens.emplace_back(TokenType::Redirection, value);
+				} else {
+					std::string value = ">";
+					value.insert(value.begin(), current);
+					tokens.emplace_back(TokenType::Redirection, value);
+				}
+			}
+			
+			continue;
+		}
+
 		if (current == '>') {
 			this->advance();
 
@@ -81,7 +102,12 @@ Token Tokenizer::read_word()
 {
 	std::string word;
 
-	while (!std::isspace(this->peek()) && this->peek() != 0) {
+	while (
+		!std::isspace(this->peek()) &&
+		this->peek() != 0 &&
+		this->peek() != '>' &&
+		this->peek() != '|'
+	) {
 		word += this->advance();
 	}
 
