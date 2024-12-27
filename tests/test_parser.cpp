@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
-#include "tokenizer.hpp"
+
 #include "parser.hpp"
+#include "tokenizer.hpp"
 
 TEST(TestParser, SimpleTest) {
     Tokenizer tokenizer("ls -al > out.txt");
