@@ -5,10 +5,10 @@
 #include <sys/wait.h>
 
 #include "parser/lib.hpp"
-#include "commands/lib.hpp"
 #include "main.hpp"
 
-std::string get_prompt() {
+std::string get_prompt()
+{
 	std::string username = getlogin();
 
 	char hostname[1024];
@@ -47,7 +47,6 @@ int main()
 {
 	signal(SIGINT, handle_sigint);
 
-	CommandManager cm;
 	std::string input;
 
 	while (true) {
@@ -59,27 +58,6 @@ int main()
 
 		if (input.empty()) {
 			continue;
-		}
-
-		std::vector<std::string> args = parse_input(input);
-
-		int result = cm.execute_command(args);
-
-		if (result == Status::SHOULD_EXIT) {
-			break;
-		} else if (result == Status::OK) {
-			continue;
-		}
-
-		pid_t pid = fork();
-
-		if (pid == 0) {
-			execute_command(args);
-			exit(EXIT_FAILURE);
-		} else if (pid > 0) {
-			waitpid(pid, nullptr, 0);
-		} else {
-			perror("fork() failed");
 		}
 	}
 }

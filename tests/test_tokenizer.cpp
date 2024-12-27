@@ -15,7 +15,7 @@ protected:
     void verify_tokens(const std::string& input, const std::vector<ExpectedToken>& expected)
     {
         Tokenizer tokenizer(input);
-		std::vector<Token> tokens = tokenizer.tokenize();
+        std::vector<Token> tokens = tokenizer.tokenize();
         ASSERT_EQ(tokens.size(), expected.size());
         
         for (size_t i = 0; i < tokens.size(); i++) {
