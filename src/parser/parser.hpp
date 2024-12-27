@@ -9,7 +9,7 @@
 #include "tokenizer.hpp"
 
 class Command {
-  public:
+public:
     std::vector<std::string> args;
 
     int stdin;
@@ -20,7 +20,7 @@ class Command {
 };
 
 class Pipeline {
-  private:
+private:
     int pos;
     std::vector<Token> tokens;
 
@@ -30,7 +30,7 @@ class Pipeline {
     void parse_command();
     void parse_redirection();
 
-  public:
+public:
     std::vector<Command> commands;
 
     Pipeline(Tokenizer);

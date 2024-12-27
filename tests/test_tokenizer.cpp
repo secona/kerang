@@ -3,7 +3,7 @@
 #include "tokenizer.hpp"
 
 class TokenizerTests : public ::testing::Test {
-  protected:
+protected:
     struct ExpectedToken {
         TokenType type;
         std::string value;

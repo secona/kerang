@@ -7,7 +7,7 @@
 enum TokenType { Word, Redirection, Pipe, EndOfFile };
 
 class Token {
-  public:
+public:
     TokenType type;
     std::string value;
 
@@ -18,11 +18,11 @@ class Tokenizer {
     std::string input;
     size_t pos;
 
-  public:
+public:
     Tokenizer(const std::string &input);
     std::vector<Token> tokenize();
 
-  private:
+private:
     char peek();
     char advance();
 
