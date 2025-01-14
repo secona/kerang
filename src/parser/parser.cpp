@@ -15,11 +15,11 @@ Pipeline::Pipeline(Tokenizer tokenizer)
 }
 
 Token *Pipeline::peek() {
-  return this->m_pos < this->m_tokens.size() ? &this->m_tokens[this->m_pos] : NULL;
+  return m_pos < m_tokens.size() ? &m_tokens[m_pos] : NULL;
 }
 
 Token *Pipeline::advance() {
-  return this->m_pos < this->m_tokens.size() ? &this->m_tokens[this->m_pos++] : NULL;
+  return m_pos < m_tokens.size() ? &m_tokens[m_pos++] : NULL;
 }
 
 void Pipeline::parse() {

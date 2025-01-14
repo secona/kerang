@@ -11,19 +11,19 @@ Tokenizer::Tokenizer(const std::string &input)
 }
 
 char Tokenizer::peek() {
-  return this->m_pos < this->m_input.size() ? this->m_input[this->m_pos] : 0;
+  return m_pos < m_input.size() ? m_input[m_pos] : 0;
 }
 
 char Tokenizer::advance() {
-  return this->m_pos < this->m_input.size() ? this->m_input[this->m_pos++] : 0;
+  return m_pos < m_input.size() ? m_input[m_pos++] : 0;
 }
 
 std::vector<Token> Tokenizer::tokenize() {
   std::vector<Token> tokens;
 
-  while (this->m_pos < this->m_input.size()) {
-    while (std::isspace(this->peek())) {
-      this->advance();
+  while (m_pos < m_input.size()) {
+    while (std::isspace(peek())) {
+      advance();
     }
 
     char current = peek();
@@ -33,13 +33,13 @@ std::vector<Token> Tokenizer::tokenize() {
     }
 
     if (std::isdigit(current)) {
-      this->advance();
+      advance();
 
-      if (this->peek() == '>') {
-        this->advance();
+      if (peek() == '>') {
+        advance();
 
-        if (this->peek() == '>') {
-          this->advance();
+        if (peek() == '>') {
+          advance();
           std::string value = ">>";
           value.insert(value.begin(), current);
           tokens.emplace_back(TokenType::Redirection, value);
@@ -54,10 +54,10 @@ std::vector<Token> Tokenizer::tokenize() {
     }
 
     if (current == '>') {
-      this->advance();
+      advance();
 
-      if (this->peek() == '>') {
-        this->advance();
+      if (peek() == '>') {
+        advance();
         tokens.emplace_back(TokenType::Redirection, ">>");
       } else {
         tokens.emplace_back(TokenType::Redirection, ">");
@@ -67,7 +67,7 @@ std::vector<Token> Tokenizer::tokenize() {
     }
 
     if (current == '|') {
-      this->advance();
+      advance();
 
       tokens.emplace_back(TokenType::Pipe, "|");
 
@@ -75,26 +75,26 @@ std::vector<Token> Tokenizer::tokenize() {
     }
 
     if (current == '"') {
-      tokens.emplace_back(this->readQuoted());
+      tokens.emplace_back(readQuoted());
       continue;
     }
 
-    tokens.emplace_back(this->readWord());
+    tokens.emplace_back(readWord());
   }
 
   return tokens;
 }
 
 Token Tokenizer::readQuoted() {
-  char quote = this->advance();
+  char quote = advance();
   std::string quoted;
 
-  while (this->peek() != quote && this->peek() != 0) {
-    quoted += this->advance();
+  while (peek() != quote && peek() != 0) {
+    quoted += advance();
   }
 
-  if (this->peek() == quote) {
-    this->advance();
+  if (peek() == quote) {
+    advance();
   }
 
   return Token(TokenType::Word, quoted);
@@ -103,9 +103,9 @@ Token Tokenizer::readQuoted() {
 Token Tokenizer::readWord() {
   std::string word;
 
-  while (!std::isspace(this->peek()) && this->peek() != 0 &&
-         this->peek() != '>' && this->peek() != '|') {
-    word += this->advance();
+  while (!std::isspace(peek()) && peek() != 0 &&
+         peek() != '>' && peek() != '|') {
+    word += advance();
   }
 
   return Token(TokenType::Word, word);
