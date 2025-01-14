@@ -31,8 +31,8 @@ private:
   char peek();
   char advance();
 
-  Token read_quoted();
-  Token read_word();
+  Token readQuoted();
+  Token readWord();
 };
 
 #endif

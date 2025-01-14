@@ -75,17 +75,17 @@ std::vector<Token> Tokenizer::tokenize() {
     }
 
     if (current == '"') {
-      tokens.emplace_back(this->read_quoted());
+      tokens.emplace_back(this->readQuoted());
       continue;
     }
 
-    tokens.emplace_back(this->read_word());
+    tokens.emplace_back(this->readWord());
   }
 
   return tokens;
 }
 
-Token Tokenizer::read_quoted() {
+Token Tokenizer::readQuoted() {
   char quote = this->advance();
   std::string quoted;
 
@@ -100,7 +100,7 @@ Token Tokenizer::read_quoted() {
   return Token(TokenType::Word, quoted);
 }
 
-Token Tokenizer::read_word() {
+Token Tokenizer::readWord() {
   std::string word;
 
   while (!std::isspace(this->peek()) && this->peek() != 0 &&

@@ -4,7 +4,7 @@
 #include <sys/wait.h>
 #include <vector>
 
-std::string get_prompt() {
+std::string getPrompt() {
   std::string username = getlogin();
 
   char hostname[1024];
@@ -19,20 +19,20 @@ std::string get_prompt() {
   return "[" + username + "@" + hostname + " " + cwd + "]> ";
 }
 
-void handle_sigint(int sig) {
+void handleSiging(int sig) {
   std::cout << std::endl
             << "Use 'exit' or Ctrl+D to quit the shell." << std::endl
-            << get_prompt();
+            << getPrompt();
   std::cout.flush();
 }
 
 int main() {
-  signal(SIGINT, handle_sigint);
+  signal(SIGINT, handleSiging);
 
   std::string input;
 
   while (true) {
-    std::cout << get_prompt();
+    std::cout << getPrompt();
 
     if (!std::getline(std::cin, input)) {
       break;

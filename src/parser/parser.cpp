@@ -27,16 +27,16 @@ void Pipeline::parse() {
     Token *current = peek();
 
     if (current->type == TokenType::Word) {
-      parse_command();
+      parseCommand();
     }
 
     if (current->type == TokenType::Redirection) {
-      parse_redirection();
+      parseRedirection();
     }
   }
 }
 
-void Pipeline::parse_command() {
+void Pipeline::parseCommand() {
   Command command;
 
   command.args.emplace_back(advance()->value);
@@ -48,7 +48,7 @@ void Pipeline::parse_command() {
   commands.emplace_back(command);
 }
 
-void Pipeline::parse_redirection() {
+void Pipeline::parseRedirection() {
   if (commands.size() == 0) {
     return;
   }

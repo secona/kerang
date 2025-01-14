@@ -26,8 +26,8 @@ private:
   Token *peek();
   Token *advance();
 
-  void parse_command();
-  void parse_redirection();
+  void parseCommand();
+  void parseRedirection();
 
 public:
   std::vector<Command> commands;

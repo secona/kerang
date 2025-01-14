@@ -4,14 +4,14 @@
 
 #include <sstream>
 
-std::vector<std::string> parse_input(const std::string &input) {
+std::vector<std::string> parseInput(const std::string &input) {
   Tokenizer tokenizer(input);
   std::vector<Token> tokens = tokenizer.tokenize();
 
-  std::vector<std::string> tokens_str;
+  std::vector<std::string> tokensString;
   for (Token token : tokens) {
-    tokens_str.push_back(token.value);
+    tokensString.push_back(token.value);
   }
 
-  return tokens_str;
+  return tokensString;
 }
