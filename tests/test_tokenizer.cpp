@@ -1,34 +1,47 @@
-#include "tokenizer.hpp"
+extern "C" {
+#include "tokenizer.h"
+}
 
 #include <gtest/gtest.h>
+#include <vector>
 
 class TokenizerTests : public ::testing::Test {
 protected:
   struct ExpectedToken {
     TokenType m_type;
     std::string m_value;
+    size_t m_len;
 
     ExpectedToken(TokenType t, const std::string &v)
       : m_type(t)
       , m_value(v) {
+      m_len = m_value.size();
     }
   };
 
   void verifyTokens(
     const std::string &input, const std::vector<ExpectedToken> &expected
   ) {
-    Tokenizer tokenizer(input);
-    std::vector<Token> tokens = tokenizer.tokenize();
-    ASSERT_EQ(tokens.size(), expected.size());
+    int count = 0;
+    Token *tokens = tokenize(input.c_str(), &count);
 
-    for (size_t i = 0; i < tokens.size(); i++) {
-      EXPECT_EQ(tokens[i].m_type, expected[i].m_type)
-        << "Token " << i << " type mismatch";
-      EXPECT_STREQ(tokens[i].m_value.c_str(), expected[i].m_value.c_str())
-        << "Token " << i << " value mismatch";
+    for (size_t i = 0; i < count; i++) {
+      Token token = tokens[i];
+
+      EXPECT_EQ(token.type, expected[i].m_type);
+      EXPECT_EQ(token.len, expected[i].m_len);
+
+      for (size_t j = 0; j < token.len; j++) {
+        EXPECT_EQ(token.value[j], expected[i].m_value[j]);
+      }
     }
   }
 };
+
+TEST_F(TokenizerTests, HandlesBasicWords) {
+  verifyTokens("echo", {{TokenType::Word, "echo"}});
+  verifyTokens("cat hello.txt", {{TokenType::Word, "cat"}, {TokenType::Word, "hello.txt"}});
+}
 
 TEST_F(TokenizerTests, HandlesQuotedStrings) {
   verifyTokens(
