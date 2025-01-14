@@ -10,6 +10,11 @@ Token *tokenize(const char *input, int *count) {
   const char *start = input;
 
   while (*ptr != 0) {
+    if (*count >= capacity) {
+      capacity *= 2;
+      tokens = (Token *)realloc(tokens, sizeof(Token) * capacity);
+    }
+
     if (isspace(*ptr)) {
       ptr++;
       continue;

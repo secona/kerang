@@ -107,3 +107,22 @@ TEST_F(TokenizerTests, HandlesPipes) {
      {TokenType::Word, "cat.txt"}}
   );
 }
+
+TEST_F(TokenizerTests, HandlesCapacity) {
+  verifyTokens(
+    "ls -al | grep main.cpp >> a.txt >> b.txt >> c.txt >> d.txt",
+    {{TokenType::Word, "ls"},
+     {TokenType::Word, "-al"},
+     {TokenType::Pipe, "|"},
+     {TokenType::Word, "grep"},
+     {TokenType::Word, "main.cpp"},
+     {TokenType::Redirection, ">>"},
+     {TokenType::Word, "a.txt"},
+     {TokenType::Redirection, ">>"},
+     {TokenType::Word, "b.txt"},
+     {TokenType::Redirection, ">>"},
+     {TokenType::Word, "c.txt"},
+     {TokenType::Redirection, ">>"},
+     {TokenType::Word, "d.txt"}}
+  );
+}
