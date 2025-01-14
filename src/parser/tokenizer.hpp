@@ -13,15 +13,15 @@ enum TokenType {
 
 class Token {
 public:
-  TokenType type;
-  std::string value;
+  TokenType m_type;
+  std::string m_value;
 
   Token(TokenType type, const std::string &value);
 };
 
 class Tokenizer {
-  std::string input;
-  size_t pos;
+  std::string m_input;
+  size_t m_pos;
 
 public:
   Tokenizer(const std::string &input);

@@ -5,12 +5,12 @@
 class TokenizerTests : public ::testing::Test {
 protected:
   struct ExpectedToken {
-    TokenType type;
-    std::string value;
+    TokenType m_type;
+    std::string m_value;
 
     ExpectedToken(TokenType t, const std::string &v)
-      : type(t)
-      , value(v) {
+      : m_type(t)
+      , m_value(v) {
     }
   };
 
@@ -22,9 +22,9 @@ protected:
     ASSERT_EQ(tokens.size(), expected.size());
 
     for (size_t i = 0; i < tokens.size(); i++) {
-      EXPECT_EQ(tokens[i].type, expected[i].type)
+      EXPECT_EQ(tokens[i].m_type, expected[i].m_type)
         << "Token " << i << " type mismatch";
-      EXPECT_STREQ(tokens[i].value.c_str(), expected[i].value.c_str())
+      EXPECT_STREQ(tokens[i].m_value.c_str(), expected[i].m_value.c_str())
         << "Token " << i << " value mismatch";
     }
   }

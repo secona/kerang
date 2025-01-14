@@ -9,8 +9,8 @@ TEST(TestParser, SimpleTest) {
 
   pipeline.parse();
 
-  EXPECT_EQ(pipeline.commands.size(), 1);
-  EXPECT_STREQ(pipeline.commands[0].args[0].c_str(), "ls");
-  EXPECT_STREQ(pipeline.commands[0].args[1].c_str(), "-al");
-  EXPECT_NE(pipeline.commands[0].stdout, STDOUT_FILENO);
+  EXPECT_EQ(pipeline.m_commands.size(), 1);
+  EXPECT_STREQ(pipeline.m_commands[0].m_args[0].c_str(), "ls");
+  EXPECT_STREQ(pipeline.m_commands[0].m_args[1].c_str(), "-al");
+  EXPECT_NE(pipeline.m_commands[0].m_stdout, STDOUT_FILENO);
 }

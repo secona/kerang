@@ -4,33 +4,33 @@
 #include <iostream>
 
 Command::Command()
-  : stdin(STDIN_FILENO)
-  , stdout(STDOUT_FILENO)
-  , stderr(STDERR_FILENO) {
+  : m_stdin(STDIN_FILENO)
+  , m_stdout(STDOUT_FILENO)
+  , m_stderr(STDERR_FILENO) {
 }
 
 Pipeline::Pipeline(Tokenizer tokenizer)
-  : pos(0)
-  , tokens(tokenizer.tokenize()) {
+  : m_pos(0)
+  , m_tokens(tokenizer.tokenize()) {
 }
 
 Token *Pipeline::peek() {
-  return this->pos < this->tokens.size() ? &this->tokens[this->pos] : NULL;
+  return this->m_pos < this->m_tokens.size() ? &this->m_tokens[this->m_pos] : NULL;
 }
 
 Token *Pipeline::advance() {
-  return this->pos < this->tokens.size() ? &this->tokens[this->pos++] : NULL;
+  return this->m_pos < this->m_tokens.size() ? &this->m_tokens[this->m_pos++] : NULL;
 }
 
 void Pipeline::parse() {
-  while (pos < tokens.size()) {
+  while (m_pos < m_tokens.size()) {
     Token *current = peek();
 
-    if (current->type == TokenType::Word) {
+    if (current->m_type == TokenType::Word) {
       parseCommand();
     }
 
-    if (current->type == TokenType::Redirection) {
+    if (current->m_type == TokenType::Redirection) {
       parseRedirection();
     }
   }
@@ -39,25 +39,25 @@ void Pipeline::parse() {
 void Pipeline::parseCommand() {
   Command command;
 
-  command.args.emplace_back(advance()->value);
+  command.m_args.emplace_back(advance()->m_value);
 
-  while (peek()->type == TokenType::Word) {
-    command.args.emplace_back(advance()->value);
+  while (peek()->m_type == TokenType::Word) {
+    command.m_args.emplace_back(advance()->m_value);
   }
 
-  commands.emplace_back(command);
+  m_commands.emplace_back(command);
 }
 
 void Pipeline::parseRedirection() {
-  if (commands.size() == 0) {
+  if (m_commands.size() == 0) {
     return;
   }
 
-  Command &command = commands.back();
+  Command &command = m_commands.back();
 
   Token *token = advance();
 
-  if (token->value == ">") {
-    command.stdout = open(advance()->value.c_str(), O_CREAT | O_WRONLY, 0666);
+  if (token->m_value == ">") {
+    command.m_stdout = open(advance()->m_value.c_str(), O_CREAT | O_WRONLY, 0666);
   }
 }

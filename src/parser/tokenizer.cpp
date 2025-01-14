@@ -1,27 +1,27 @@
 #include "tokenizer.hpp"
 
 Token::Token(TokenType type, const std::string &value)
-  : type(type)
-  , value(value) {
+  : m_type(type)
+  , m_value(value) {
 }
 
 Tokenizer::Tokenizer(const std::string &input)
-  : input(input)
-  , pos(0) {
+  : m_input(input)
+  , m_pos(0) {
 }
 
 char Tokenizer::peek() {
-  return this->pos < this->input.size() ? this->input[this->pos] : 0;
+  return this->m_pos < this->m_input.size() ? this->m_input[this->m_pos] : 0;
 }
 
 char Tokenizer::advance() {
-  return this->pos < this->input.size() ? this->input[this->pos++] : 0;
+  return this->m_pos < this->m_input.size() ? this->m_input[this->m_pos++] : 0;
 }
 
 std::vector<Token> Tokenizer::tokenize() {
   std::vector<Token> tokens;
 
-  while (this->pos < this->input.size()) {
+  while (this->m_pos < this->m_input.size()) {
     while (std::isspace(this->peek())) {
       this->advance();
     }

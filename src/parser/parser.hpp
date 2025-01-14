@@ -9,19 +9,19 @@
 
 class Command {
 public:
-  std::vector<std::string> args;
+  std::vector<std::string> m_args;
 
-  int stdin;
-  int stdout;
-  int stderr;
+  int m_stdin;
+  int m_stdout;
+  int m_stderr;
 
   Command();
 };
 
 class Pipeline {
 private:
-  int pos;
-  std::vector<Token> tokens;
+  int m_pos;
+  std::vector<Token> m_tokens;
 
   Token *peek();
   Token *advance();
@@ -30,7 +30,7 @@ private:
   void parseRedirection();
 
 public:
-  std::vector<Command> commands;
+  std::vector<Command> m_commands;
 
   Pipeline(Tokenizer);
 

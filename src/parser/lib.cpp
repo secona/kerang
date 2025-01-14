@@ -10,7 +10,7 @@ std::vector<std::string> parseInput(const std::string &input) {
 
   std::vector<std::string> tokensString;
   for (Token token : tokens) {
-    tokensString.push_back(token.value);
+    tokensString.push_back(token.m_value);
   }
 
   return tokensString;
