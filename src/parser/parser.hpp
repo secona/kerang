@@ -1,41 +1,40 @@
 #ifndef KERANG_PARSER_PARSER_HPP_
 #define KERANG_PARSER_PARSER_HPP_
 
-#include <unistd.h>
+#include "tokenizer.hpp"
 
 #include <string>
+#include <unistd.h>
 #include <vector>
-
-#include "tokenizer.hpp"
 
 class Command {
 public:
-    std::vector<std::string> args;
+  std::vector<std::string> args;
 
-    int stdin;
-    int stdout;
-    int stderr;
+  int stdin;
+  int stdout;
+  int stderr;
 
-    Command();
+  Command();
 };
 
 class Pipeline {
 private:
-    int pos;
-    std::vector<Token> tokens;
+  int pos;
+  std::vector<Token> tokens;
 
-    Token *peek();
-    Token *advance();
+  Token *peek();
+  Token *advance();
 
-    void parse_command();
-    void parse_redirection();
+  void parse_command();
+  void parse_redirection();
 
 public:
-    std::vector<Command> commands;
+  std::vector<Command> commands;
 
-    Pipeline(Tokenizer);
+  Pipeline(Tokenizer);
 
-    void parse();
+  void parse();
 };
 
 #endif

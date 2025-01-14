@@ -1,3 +1,47 @@
-BasedOnStyle: LLVM
-IndentWidth: 4
-AccessModifierOffset: -4
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: Never
+AllowShortCaseLabelsOnASingleLine: false
+AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+AlwaysBreakBeforeMultilineStrings: true
+
+AlignAfterOpenBracket: BlockIndent
+AlignArrayOfStructures: None
+
+BreakBeforeTernaryOperators: true
+BreakStringLiterals: false
+
+BinPackArguments: false
+BinPackParameters: false
+
+CompactNamespaces: false
+
+ColumnLimit: 0
+
+# Include Blocks
+IncludeBlocks: Regroup
+IndentPPDirectives: AfterHash
+
+# Indentation
+IndentAccessModifiers: false
+IndentCaseBlocks: false
+IndentCaseLabels: false
+IndentExternBlock: NoIndent
+IndentRequiresClause: false
+IndentWidth: 2
+IndentWrappedFunctionNames: false
+InsertTrailingCommas: Wrapped
+ContinuationIndentWidth: 2
+
+PointerAlignment: Right
+
+# Classes
+PackConstructorInitializers: Never
+BreakConstructorInitializers: BeforeComma
+BreakInheritanceList: BeforeComma
+EmptyLineBeforeAccessModifier: Always
+ConstructorInitializerIndentWidth: 2
