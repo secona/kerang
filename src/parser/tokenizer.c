@@ -2,19 +2,50 @@
 
 #include <ctype.h>
 
-Token *tokenize(const char *input, int *count) {
+TokenArray *create_token_array(size_t capacity) {
+  TokenArray *arr = (TokenArray *)malloc(sizeof(TokenArray));
+  if (!arr)
+    return NULL;
+
+  arr->tokens = malloc(sizeof(Token) * capacity);
+  if (!arr->tokens) {
+    return NULL;
+    free(arr);
+  }
+
+  arr->cap = capacity;
+  arr->len = 0;
+
+  return arr;
+}
+
+void expand_token_array(TokenArray *arr) {
+  size_t new_cap = arr->cap * 2;
+  Token *new_tokens = (Token *)realloc(arr->tokens, sizeof(Token) * new_cap);
+
+  arr->cap = new_cap;
+  arr->tokens = new_tokens;
+}
+
+void add_token(TokenArray *arr, TokenType type, const char *value, size_t len) {
+  if (arr->len >= arr->cap) {
+    expand_token_array(arr);
+  }
+
+  arr->tokens[arr->len].type = type;
+  arr->tokens[arr->len].value = value;
+  arr->tokens[arr->len].len = len;
+  arr->len++;
+}
+
+TokenArray *tokenize(const char *input) {
   int capacity = 10;
-  Token *tokens = (Token *)malloc(sizeof(Token) * capacity);
+  TokenArray *arr = create_token_array(10);
 
   const char *ptr = input;
   const char *start = input;
 
   while (*ptr != 0) {
-    if (*count >= capacity) {
-      capacity *= 2;
-      tokens = (Token *)realloc(tokens, sizeof(Token) * capacity);
-    }
-
     if (isspace(*ptr)) {
       ptr++;
       continue;
@@ -31,11 +62,7 @@ Token *tokenize(const char *input, int *count) {
         if (*ptr == '>')
           ptr++;
 
-        tokens[*count].type = Redirection;
-        tokens[*count].len = ptr - start;
-        tokens[*count].value = start;
-
-        (*count)++;
+        add_token(arr, Redirection, start, ptr - start);
       }
 
       continue;
@@ -47,11 +74,7 @@ Token *tokenize(const char *input, int *count) {
       if (*ptr == '>')
         ptr++;
 
-      tokens[*count].type = Redirection;
-      tokens[*count].len = ptr - start;
-      tokens[*count].value = start;
-
-      (*count)++;
+      add_token(arr, Redirection, start, ptr - start);
 
       continue;
     }
@@ -59,11 +82,7 @@ Token *tokenize(const char *input, int *count) {
     if (*ptr == '|') {
       ptr++;
 
-      tokens[*count].type = Pipe;
-      tokens[*count].len = ptr - start;
-      tokens[*count].value = start;
-
-      (*count)++;
+      add_token(arr, Pipe, start, ptr - start);
 
       continue;
     }
@@ -75,11 +94,7 @@ Token *tokenize(const char *input, int *count) {
       while (!(*ptr == '"' || *ptr == 0))
         ptr++;
 
-      tokens[*count].type = Word;
-      tokens[*count].len = ptr - start;
-      tokens[*count].value = start;
-
-      (*count)++;
+      add_token(arr, Word, start, ptr - start);
 
       continue;
     }
@@ -87,12 +102,8 @@ Token *tokenize(const char *input, int *count) {
     while (!(isspace(*ptr) || *ptr == 0 || *ptr == '>' || *ptr == '|'))
       ptr++;
 
-    tokens[*count].type = Word;
-    tokens[*count].len = ptr - start;
-    tokens[*count].value = start;
-
-    (*count)++;
+    add_token(arr, Word, start, ptr - start);
   }
 
-  return tokens;
+  return arr;
 }

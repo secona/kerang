@@ -22,11 +22,10 @@ protected:
   void verifyTokens(
     const std::string &input, const std::vector<ExpectedToken> &expected
   ) {
-    int count = 0;
-    Token *tokens = tokenize(input.c_str(), &count);
+    TokenArray *arr = tokenize(input.c_str());
 
-    for (size_t i = 0; i < count; i++) {
-      Token token = tokens[i];
+    for (size_t i = 0; i < arr->len; i++) {
+      Token token = arr->tokens[i];
 
       EXPECT_EQ(token.type, expected[i].m_type);
       EXPECT_EQ(token.len, expected[i].m_len);

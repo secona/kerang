@@ -16,6 +16,12 @@ typedef struct {
   size_t len;
 } Token;
 
-Token *tokenize(const char *input, int *count);
+typedef struct {
+  Token *tokens;
+  size_t cap;
+  size_t len;
+} TokenArray;
+
+TokenArray *tokenize(const char *input);
 
 #endif
