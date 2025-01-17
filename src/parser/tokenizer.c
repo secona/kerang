@@ -2,7 +2,7 @@
 
 #include <ctype.h>
 
-TokenArray *create_token_array(size_t capacity) {
+TokenArray *TokenArray_create(size_t capacity) {
   TokenArray *arr = (TokenArray *)malloc(sizeof(TokenArray));
   if (!arr)
     return NULL;
@@ -19,7 +19,7 @@ TokenArray *create_token_array(size_t capacity) {
   return arr;
 }
 
-void expand_token_array(TokenArray *arr) {
+void TokenArray_expand(TokenArray *arr) {
   size_t new_cap = arr->cap * 2;
   Token *new_tokens = (Token *)realloc(arr->tokens, sizeof(Token) * new_cap);
 
@@ -27,9 +27,9 @@ void expand_token_array(TokenArray *arr) {
   arr->tokens = new_tokens;
 }
 
-void add_token(TokenArray *arr, TokenType type, const char *value, size_t len) {
+void TokenArray_add(TokenArray *arr, TokenType type, const char *value, size_t len) {
   if (arr->len >= arr->cap) {
-    expand_token_array(arr);
+    TokenArray_expand(arr);
   }
 
   arr->tokens[arr->len].type = type;
@@ -40,7 +40,7 @@ void add_token(TokenArray *arr, TokenType type, const char *value, size_t len) {
 
 TokenArray *tokenize(const char *input) {
   int capacity = 10;
-  TokenArray *arr = create_token_array(10);
+  TokenArray *arr = TokenArray_create(10);
 
   const char *ptr = input;
   const char *start = input;
@@ -62,7 +62,7 @@ TokenArray *tokenize(const char *input) {
         if (*ptr == '>')
           ptr++;
 
-        add_token(arr, Redirection, start, ptr - start);
+        TokenArray_add(arr, Redirection, start, ptr - start);
       }
 
       continue;
@@ -74,7 +74,7 @@ TokenArray *tokenize(const char *input) {
       if (*ptr == '>')
         ptr++;
 
-      add_token(arr, Redirection, start, ptr - start);
+      TokenArray_add(arr, Redirection, start, ptr - start);
 
       continue;
     }
@@ -82,7 +82,7 @@ TokenArray *tokenize(const char *input) {
     if (*ptr == '|') {
       ptr++;
 
-      add_token(arr, Pipe, start, ptr - start);
+      TokenArray_add(arr, Pipe, start, ptr - start);
 
       continue;
     }
@@ -94,7 +94,7 @@ TokenArray *tokenize(const char *input) {
       while (!(*ptr == '"' || *ptr == 0))
         ptr++;
 
-      add_token(arr, Word, start, ptr - start);
+      TokenArray_add(arr, Word, start, ptr - start);
 
       continue;
     }
@@ -102,7 +102,7 @@ TokenArray *tokenize(const char *input) {
     while (!(isspace(*ptr) || *ptr == 0 || *ptr == '>' || *ptr == '|'))
       ptr++;
 
-    add_token(arr, Word, start, ptr - start);
+    TokenArray_add(arr, Word, start, ptr - start);
   }
 
   return arr;
