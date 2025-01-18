@@ -3,12 +3,13 @@
 
 #include "tokenizer.h"
 
-typedef struct {
+typedef struct command {
   const char *args[256];
   int argc;
+
+  struct command *next;
 } Command;
 
-Command *parse(Token *tokens, int count);
 Command *parse_commands(TokenArray *arr);
 
 #endif

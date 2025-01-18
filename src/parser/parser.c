@@ -3,21 +3,31 @@
 #include <fcntl.h>
 #include <stdlib.h>
 
-Command *parse(Token *tokens, int count) {
+Command *parse(Token **cur, Token *end) {
   Command *cmd = (Command *)malloc(sizeof(Command));
   if (!cmd)
     return NULL;
 
-  for (int i = 0; i < count; i++) {
-    switch (tokens[i].type) {
+  while (*cur < end) {
+    Token *token = *cur;
+
+    switch (token->type) {
     case Word:
       if (cmd->argc < 255) {
-        cmd->args[cmd->argc++] = tokens[i].value;
+        cmd->args[cmd->argc++] = token->value;
       }
+      (*cur)++;
+      break;
 
     case Redirection:
+      break;
+
     case Pipe:
-    case EndOfFile:;
+      (*cur)++;
+      return cmd;
+
+    case EndOfFile:
+      return cmd;
     }
   }
 
@@ -28,9 +38,25 @@ Command *parse_commands(TokenArray *arr) {
   if (!arr || !arr->len)
     return NULL;
 
-  Command *first = parse(arr->tokens, arr->len);
-  if (!first)
-    return NULL;
+  Token *cur = arr->tokens;
+  Token *end = arr->tokens + arr->len;
+
+  Command *first = NULL;
+  Command *current = NULL;
+
+  do {
+    Command *cmd = parse(&cur, end);
+    if (!cmd)
+      return NULL;
+
+    if (!first) {
+      first = cmd;
+      current = cmd;
+    } else {
+      current->next = cmd;
+      current = cmd;
+    }
+  } while (cur < end);
 
   return first;
 }

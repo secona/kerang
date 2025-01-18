@@ -1,7 +1,7 @@
 #include "tokenizer.h"
 
-#include <string.h>
 #include <ctype.h>
+#include <string.h>
 
 TokenArray *TokenArray_create(size_t capacity) {
   TokenArray *arr = (TokenArray *)malloc(sizeof(TokenArray));
