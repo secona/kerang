@@ -12,34 +12,33 @@
         inherit system;
       };
 
-      kerang = pkgs.mkDerivation {
+      kerang = pkgs.stdenv.mkDerivation {
         pname = "kerang";
         version = "0.0.0";
 
         src = ./.;
 
-        nativeBuildInputs = [
-          pkgs.cmake
-          pkgs.gcc
-        ];
+        nativeBuildInputs = with pkgs; [ cmake cmocka ];
 
         cmakeFlags = [
           "-DCMAKE_BUILD_TYPE=Release"
         ];
 
-        doInstallCheck = false;
-        buildInputs = [];
+        buildPhase = ''
+          make kerang
+        '';
+
+        installPhase = ''
+          mkdir -p $out/bin
+          cp kerang $out/bin/
+        '';
       };
     in {
       packages.default = kerang;
 
       devShells.default = pkgs.mkShell {
-        buildInputs = [
-          pkgs.cmake
-          pkgs.gcc
-          pkgs.clang-tools
-          pkgs.cmocka
-        ];
+        inputsFrom = [kerang];
+        buildInputs = with pkgs; [ clang-tools ];
       };
     });
 }
