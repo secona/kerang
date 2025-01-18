@@ -1,10 +1,10 @@
 #include "tokenizer.h"
 
-#include <cmocka.h>
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <string.h>
+#include <cmocka.h>
 
 typedef struct {
     TokenType type;

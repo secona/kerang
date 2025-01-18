@@ -25,6 +25,7 @@ ColumnLimit: 0
 # Include Blocks
 IncludeBlocks: Regroup
 IndentPPDirectives: AfterHash
+SortIncludes: Never
 
 # Indentation
 IndentAccessModifiers: false

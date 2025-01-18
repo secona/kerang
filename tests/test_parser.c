@@ -1,11 +1,11 @@
 #include "parser.h"
 #include "tokenizer.h"
 
-#include <cmocka.h>
 #include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <string.h>
+#include <cmocka.h>
 
 void test_handlesBasic(void **state) {
     (void)state; // unused
