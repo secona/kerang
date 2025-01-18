@@ -4,21 +4,21 @@
 #include <stdlib.h>
 
 typedef enum {
-  Word,
-  Redirection,
-  Pipe,
-  EndOfFile,
-  Empty,
+    Word,
+    Redirection,
+    Pipe,
+    EndOfFile,
+    Empty,
 } TokenType;
 
 typedef struct {
-  TokenType type;
-  char *value;
+    TokenType type;
+    char *value;
 } Token;
 
 typedef struct {
-  const char *input;
-  const char *ptr;
+    const char *input;
+    const char *ptr;
 } Tokenizer;
 
 Token Tokenizer_next(Tokenizer *tokenizer);

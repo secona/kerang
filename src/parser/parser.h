@@ -4,10 +4,10 @@
 #include "tokenizer.h"
 
 typedef struct command {
-  const char *args[256];
-  int argc;
+    const char *args[256];
+    int argc;
 
-  struct command *next;
+    struct command *next;
 } Command;
 
 Command *parse_commands(Tokenizer *tokenizer);

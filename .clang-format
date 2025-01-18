@@ -4,7 +4,7 @@ AllowShortBlocksOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortEnumsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: false
-AllowShortIfStatementsOnASingleLine: Never
+AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowShortLoopsOnASingleLine: false
 
 AlwaysBreakBeforeMultilineStrings: true
@@ -32,10 +32,10 @@ IndentCaseBlocks: false
 IndentCaseLabels: false
 IndentExternBlock: NoIndent
 IndentRequiresClause: false
-IndentWidth: 2
+IndentWidth: 4
 IndentWrappedFunctionNames: false
 InsertTrailingCommas: Wrapped
-ContinuationIndentWidth: 2
+ContinuationIndentWidth: 4
 
 PointerAlignment: Right
 
