@@ -1,5 +1,9 @@
-find_package(GTest REQUIRED)
+find_package(CMocka REQUIRED)
 
-add_executable(kerang_tests test_parser.cpp test_tokenizer.cpp)
-target_link_libraries(kerang_tests PRIVATE parser_lib gtest gtest_main)
-add_test(NAME my_tests COMMAND kerang_tests)
+add_executable(test_parser test_parser.c)
+target_link_libraries(test_parser PRIVATE parser_lib cmocka)
+add_test(NAME test_parser COMMAND test_parser)
+
+add_executable(test_tokenizer test_tokenizer.c)
+target_link_libraries(test_tokenizer PRIVATE parser_lib cmocka)
+add_test(NAME test_tokenizer COMMAND test_tokenizer)

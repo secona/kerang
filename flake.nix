@@ -37,8 +37,8 @@
         buildInputs = [
           pkgs.cmake
           pkgs.gcc
-          pkgs.gtest
           pkgs.clang-tools
+          pkgs.cmocka
         ];
       };
     });
