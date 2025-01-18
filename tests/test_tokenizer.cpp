@@ -28,11 +28,7 @@ protected:
       Token token = arr->tokens[i];
 
       EXPECT_EQ(token.type, expected[i].m_type);
-      EXPECT_EQ(token.len, expected[i].m_len);
-
-      for (size_t j = 0; j < token.len; j++) {
-        EXPECT_EQ(token.value[j], expected[i].m_value[j]);
-      }
+      EXPECT_STREQ(token.value, expected[i].m_value.c_str());
     }
   }
 };

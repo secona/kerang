@@ -1,5 +1,6 @@
 #include "tokenizer.h"
 
+#include <string.h>
 #include <ctype.h>
 
 TokenArray *TokenArray_create(size_t capacity) {
@@ -9,8 +10,8 @@ TokenArray *TokenArray_create(size_t capacity) {
 
   arr->tokens = malloc(sizeof(Token) * capacity);
   if (!arr->tokens) {
-    return NULL;
     free(arr);
+    return NULL;
   }
 
   arr->cap = capacity;
@@ -28,13 +29,21 @@ void TokenArray_expand(TokenArray *arr) {
 }
 
 void TokenArray_add(TokenArray *arr, TokenType type, const char *value, size_t len) {
-  if (arr->len >= arr->cap) {
+  if (!arr || !value)
+    return;
+
+  if (arr->len >= arr->cap)
     TokenArray_expand(arr);
-  }
+
+  char *temp = (char *)malloc(len + 1);
+  if (!temp)
+    return;
+
+  memcpy(temp, value, len);
+  temp[len] = 0;
 
   arr->tokens[arr->len].type = type;
-  arr->tokens[arr->len].value = value;
-  arr->tokens[arr->len].len = len;
+  arr->tokens[arr->len].value = temp;
   arr->len++;
 }
 
@@ -95,6 +104,7 @@ TokenArray *tokenize(const char *input) {
         ptr++;
 
       TokenArray_add(arr, Word, start, ptr - start);
+      ptr++;
 
       continue;
     }
