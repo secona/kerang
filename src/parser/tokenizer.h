@@ -8,6 +8,7 @@ typedef enum {
   Redirection,
   Pipe,
   EndOfFile,
+  Empty,
 } TokenType;
 
 typedef struct {
@@ -16,11 +17,11 @@ typedef struct {
 } Token;
 
 typedef struct {
-  Token *tokens;
-  size_t cap;
-  size_t len;
-} TokenArray;
+  const char *input;
+  const char *ptr;
+} Tokenizer;
 
-TokenArray *tokenize(const char *input);
+Token Tokenizer_next(Tokenizer *tokenizer);
+Tokenizer Tokenizer_new(const char *input);
 
 #endif

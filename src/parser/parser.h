@@ -10,6 +10,6 @@ typedef struct command {
   struct command *next;
 } Command;
 
-Command *parse_commands(TokenArray *arr);
+Command *parse_commands(Tokenizer *tokenizer);
 
 #endif

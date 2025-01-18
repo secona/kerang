@@ -8,8 +8,8 @@ extern "C" {
 TEST(ParserTest, HandlesBasic) {
   const char *input = "ls";
 
-  TokenArray *arr = tokenize(input);
-  Command *commands = parse_commands(arr);
+  Tokenizer tokenizer = Tokenizer_new(input);
+  Command *commands = parse_commands(&tokenizer);
 
   EXPECT_EQ(commands->argc, 1);
   EXPECT_STREQ(commands->args[0], "ls");
@@ -18,8 +18,8 @@ TEST(ParserTest, HandlesBasic) {
 TEST(ParserTest, HandlesMultiple) {
   const char *input = "ls | grep test.txt";
 
-  TokenArray *arr = tokenize(input);
-  Command *commands = parse_commands(arr);
+  Tokenizer tokenizer = Tokenizer_new(input);
+  Command *commands = parse_commands(&tokenizer);
 
   EXPECT_EQ(commands->argc, 1);
   EXPECT_STREQ(commands->args[0], "ls");

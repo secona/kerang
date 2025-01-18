@@ -22,31 +22,34 @@ protected:
   void verifyTokens(
     const std::string &input, const std::vector<ExpectedToken> &expected
   ) {
-    TokenArray *arr = tokenize(input.c_str());
+    Tokenizer tokenizer = Tokenizer_new(input.c_str());
+    Token token;
+    size_t i = -1;
 
-    for (size_t i = 0; i < arr->len; i++) {
-      Token token = arr->tokens[i];
+    do {
+      i++;
+      token = Tokenizer_next(&tokenizer);
 
       EXPECT_EQ(token.type, expected[i].m_type);
-      EXPECT_STREQ(token.value, expected[i].m_value.c_str());
-    }
+      EXPECT_STREQ(token.value == NULL ? "" : token.value, expected[i].m_value.c_str());
+    } while (token.type != Empty);
   }
 };
 
 TEST_F(TokenizerTests, HandlesBasicWords) {
-  verifyTokens("echo", {{TokenType::Word, "echo"}});
-  verifyTokens("cat hello.txt", {{TokenType::Word, "cat"}, {TokenType::Word, "hello.txt"}});
+  verifyTokens("echo", {{TokenType::Word, "echo"}, {TokenType::Empty, ""}});
+  verifyTokens("cat hello.txt", {{TokenType::Word, "cat"}, {TokenType::Word, "hello.txt"}, {TokenType::Empty, ""}});
 }
 
 TEST_F(TokenizerTests, HandlesQuotedStrings) {
   verifyTokens(
     "echo \"Hello, World!\"",
-    {{TokenType::Word, "echo"}, {TokenType::Word, "Hello, World!"}}
+    {{TokenType::Word, "echo"}, {TokenType::Word, "Hello, World!"}, {TokenType::Empty, ""}}
   );
 
   verifyTokens(
     "echo \">>\"",
-    {{TokenType::Word, "echo"}, {TokenType::Word, ">>"}}
+    {{TokenType::Word, "echo"}, {TokenType::Word, ">>"}, {TokenType::Empty, ""}}
   );
 }
 
@@ -56,7 +59,8 @@ TEST_F(TokenizerTests, HandlesRedirection) {
     {{TokenType::Word, "ls"},
      {TokenType::Word, "-al"},
      {TokenType::Redirection, ">>"},
-     {TokenType::Word, "test.txt"}}
+     {TokenType::Word, "test.txt"},
+     {TokenType::Empty, ""}}
   );
 
   verifyTokens(
@@ -64,7 +68,8 @@ TEST_F(TokenizerTests, HandlesRedirection) {
     {{TokenType::Word, "ls"},
      {TokenType::Word, "-al"},
      {TokenType::Redirection, ">"},
-     {TokenType::Word, "cat.txt"}}
+     {TokenType::Word, "cat.txt"},
+     {TokenType::Empty, ""}}
   );
 
   verifyTokens(
@@ -72,7 +77,8 @@ TEST_F(TokenizerTests, HandlesRedirection) {
     {{TokenType::Word, "ls"},
      {TokenType::Word, "-al"},
      {TokenType::Redirection, "2>>"},
-     {TokenType::Word, "cat.txt"}}
+     {TokenType::Word, "cat.txt"},
+     {TokenType::Empty, ""}}
   );
 
   verifyTokens(
@@ -80,7 +86,8 @@ TEST_F(TokenizerTests, HandlesRedirection) {
     {{TokenType::Word, "ls"},
      {TokenType::Word, "-al2"},
      {TokenType::Redirection, ">>"},
-     {TokenType::Word, "cat.txt"}}
+     {TokenType::Word, "cat.txt"},
+     {TokenType::Empty, ""}}
   );
 }
 
@@ -91,7 +98,8 @@ TEST_F(TokenizerTests, HandlesPipes) {
      {TokenType::Word, "-al"},
      {TokenType::Pipe, "|"},
      {TokenType::Word, "grep"},
-     {TokenType::Word, "main.cpp"}}
+     {TokenType::Word, "main.cpp"},
+     {TokenType::Empty, ""}}
   );
 
   verifyTokens(
@@ -99,7 +107,8 @@ TEST_F(TokenizerTests, HandlesPipes) {
     {{TokenType::Word, "ls"},
      {TokenType::Word, "-al"},
      {TokenType::Pipe, "|"},
-     {TokenType::Word, "cat.txt"}}
+     {TokenType::Word, "cat.txt"},
+     {TokenType::Empty, ""}}
   );
 }
 
@@ -118,6 +127,7 @@ TEST_F(TokenizerTests, HandlesCapacity) {
      {TokenType::Redirection, ">>"},
      {TokenType::Word, "c.txt"},
      {TokenType::Redirection, ">>"},
-     {TokenType::Word, "d.txt"}}
+     {TokenType::Word, "d.txt"},
+     {TokenType::Empty, ""}}
   );
 }
