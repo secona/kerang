@@ -3,17 +3,12 @@
 
 #include "tokenizer.h"
 
-#include <unistd.h>
-
 typedef struct {
-  int in_fd;
-  int out_fd;
-  int err_fd;
-
-  const char **args;
+  const char *args[256];
   int argc;
 } Command;
 
 Command *parse(Token *tokens, int count);
+Command *parse_commands(TokenArray *arr);
 
 #endif
