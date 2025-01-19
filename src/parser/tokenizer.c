@@ -15,7 +15,7 @@ Token Tokenizer_next(Tokenizer *tokenizer) {
     Token token;
 
     if (!tokenizer || *tokenizer->ptr == 0) {
-        token.type = Empty;
+        token.type = TOKEN_EMPTY;
         token.value = NULL;
         return token;
     }
@@ -25,6 +25,15 @@ Token Tokenizer_next(Tokenizer *tokenizer) {
 
     const char *start = tokenizer->ptr;
 
+    if (*tokenizer->ptr == ';') {
+        tokenizer->ptr++;
+
+        token.type = TOKEN_SEMICOLON;
+        token.value = malloc(tokenizer->ptr - start + 1);
+        memcpy(token.value, start, tokenizer->ptr - start);
+        return token;
+    }
+
     if (isdigit(*tokenizer->ptr)) {
         tokenizer->ptr++;
 
@@ -33,7 +42,7 @@ Token Tokenizer_next(Tokenizer *tokenizer) {
 
             if (*tokenizer->ptr == '>') tokenizer->ptr++;
 
-            token.type = Redirection;
+            token.type = TOKEN_REDIR;
             token.value = malloc(tokenizer->ptr - start + 1);
             memcpy(token.value, start, tokenizer->ptr - start);
             return token;
@@ -45,7 +54,7 @@ Token Tokenizer_next(Tokenizer *tokenizer) {
 
         if (*tokenizer->ptr == '>') tokenizer->ptr++;
 
-        token.type = Redirection;
+        token.type = TOKEN_REDIR;
         token.value = malloc(tokenizer->ptr - start + 1);
         memcpy(token.value, start, tokenizer->ptr - start);
 
@@ -55,7 +64,7 @@ Token Tokenizer_next(Tokenizer *tokenizer) {
     if (*tokenizer->ptr == '|') {
         tokenizer->ptr++;
 
-        token.type = Pipe;
+        token.type = TOKEN_PIPE;
         token.value = malloc(tokenizer->ptr - start + 1);
         memcpy(token.value, start, tokenizer->ptr - start);
 
@@ -69,7 +78,7 @@ Token Tokenizer_next(Tokenizer *tokenizer) {
         while (!(*tokenizer->ptr == '"' || *tokenizer->ptr == 0))
             tokenizer->ptr++;
 
-        token.type = Word;
+        token.type = TOKEN_WORD;
         token.value = malloc(tokenizer->ptr - start + 1);
         memcpy(token.value, start, tokenizer->ptr - start);
 
@@ -81,7 +90,7 @@ Token Tokenizer_next(Tokenizer *tokenizer) {
     while (!isspace(*tokenizer->ptr) && *tokenizer->ptr != 0 && *tokenizer->ptr != '>' && *tokenizer->ptr != '|')
         tokenizer->ptr++;
 
-    token.type = Word;
+    token.type = TOKEN_WORD;
     token.value = malloc(tokenizer->ptr - start + 1);
     memcpy(token.value, start, tokenizer->ptr - start);
     return token;

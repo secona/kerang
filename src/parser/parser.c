@@ -11,22 +11,22 @@ Command *parse_commands(Tokenizer *tokenizer) {
         Token token = Tokenizer_next(tokenizer);
 
         switch (token.type) {
-        case Word:
+        case TOKEN_WORD:
             if (current->argc < 255) {
                 current->args[current->argc++] = token.value;
             }
             break;
 
-        case Redirection:
+        case TOKEN_REDIR:
             break;
 
-        case Pipe:
+        case TOKEN_PIPE:
             current->next = (Command *)malloc(sizeof(Command));
             current = current->next;
             break;
 
-        case Empty:
-        case EndOfFile:
+        case TOKEN_EMPTY:
+        case TOKEN_EOF:
             return first;
         }
     }

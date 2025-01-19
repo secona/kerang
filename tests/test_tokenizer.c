@@ -24,21 +24,21 @@ void verify_tokens(const char *input, ExpectedToken expected[]) {
         else
             assert_null(token.value);
         i++;
-    } while (token.type != Empty);
+    } while (token.type != TOKEN_EMPTY);
 }
 
 void test_handlesBasicWords(void **state) {
     (void)state; // unused
     ExpectedToken expected[] = {
-        {Word, "echo"},
-        {Empty, NULL}
+        {TOKEN_WORD, "echo"},
+        {TOKEN_EMPTY, NULL}
     };
     verify_tokens("echo", expected);
 
     ExpectedToken expected2[] = {
-        {Word, "cat"},
-        {Word, "hello.txt"},
-        {Empty, NULL}
+        {TOKEN_WORD, "cat"},
+        {TOKEN_WORD, "hello.txt"},
+        {TOKEN_EMPTY, NULL}
     };
     verify_tokens("cat hello.txt", expected2);
 }
@@ -46,16 +46,16 @@ void test_handlesBasicWords(void **state) {
 void test_handlesQuotedStrings(void **state) {
     (void)state; // unused
     ExpectedToken expected[] = {
-        {Word, "echo"},
-        {Word, "Hello, World!"},
-        {Empty, NULL}
+        {TOKEN_WORD, "echo"},
+        {TOKEN_WORD, "Hello, World!"},
+        {TOKEN_EMPTY, NULL}
     };
     verify_tokens("echo \"Hello, World!\"", expected);
 
     ExpectedToken expected2[] = {
-        {Word, "echo"},
-        {Word, ">>"},
-        {Empty, NULL}
+        {TOKEN_WORD, "echo"},
+        {TOKEN_WORD, ">>"},
+        {TOKEN_EMPTY, NULL}
     };
     verify_tokens("echo \">>\"", expected2);
 }
@@ -63,38 +63,38 @@ void test_handlesQuotedStrings(void **state) {
 void test_handlesRedirection(void **state) {
     (void)state; // unused
     ExpectedToken expected[] = {
-        {Word, "ls"},
-        {Word, "-al"},
-        {Redirection, ">>"},
-        {Word, "test.txt"},
-        {Empty, NULL}
+        {TOKEN_WORD, "ls"},
+        {TOKEN_WORD, "-al"},
+        {TOKEN_REDIR, ">>"},
+        {TOKEN_WORD, "test.txt"},
+        {TOKEN_EMPTY, NULL}
     };
     verify_tokens("ls -al >> test.txt", expected);
 
     ExpectedToken expected2[] = {
-        {Word, "ls"},
-        {Word, "-al"},
-        {Redirection, ">"},
-        {Word, "cat.txt"},
-        {Empty, NULL}
+        {TOKEN_WORD, "ls"},
+        {TOKEN_WORD, "-al"},
+        {TOKEN_REDIR, ">"},
+        {TOKEN_WORD, "cat.txt"},
+        {TOKEN_EMPTY, NULL}
     };
     verify_tokens("ls -al>cat.txt", expected2);
 
     ExpectedToken expected3[] = {
-        {Word, "ls"},
-        {Word, "-al"},
-        {Redirection, "2>>"},
-        {Word, "cat.txt"},
-        {Empty, NULL}
+        {TOKEN_WORD, "ls"},
+        {TOKEN_WORD, "-al"},
+        {TOKEN_REDIR, "2>>"},
+        {TOKEN_WORD, "cat.txt"},
+        {TOKEN_EMPTY, NULL}
     };
     verify_tokens("ls -al 2>> cat.txt", expected3);
 
     ExpectedToken expected4[] = {
-        {Word, "ls"},
-        {Word, "-al2"},
-        {Redirection, ">>"},
-        {Word, "cat.txt"},
-        {Empty, NULL}
+        {TOKEN_WORD, "ls"},
+        {TOKEN_WORD, "-al2"},
+        {TOKEN_REDIR, ">>"},
+        {TOKEN_WORD, "cat.txt"},
+        {TOKEN_EMPTY, NULL}
     };
     verify_tokens("ls -al2>> cat.txt", expected4);
 }
@@ -102,21 +102,21 @@ void test_handlesRedirection(void **state) {
 void test_handlesPipes(void **state) {
     (void)state; // unused
     ExpectedToken expected[] = {
-        {Word, "ls"},
-        {Word, "-al"},
-        {Pipe, "|"},
-        {Word, "grep"},
-        {Word, "main.cpp"},
-        {Empty, NULL}
+        {TOKEN_WORD, "ls"},
+        {TOKEN_WORD, "-al"},
+        {TOKEN_PIPE, "|"},
+        {TOKEN_WORD, "grep"},
+        {TOKEN_WORD, "main.cpp"},
+        {TOKEN_EMPTY, NULL}
     };
     verify_tokens("ls -al | grep main.cpp", expected);
 
     ExpectedToken expected2[] = {
-        {Word, "ls"},
-        {Word, "-al"},
-        {Pipe, "|"},
-        {Word, "cat.txt"},
-        {Empty, NULL}
+        {TOKEN_WORD, "ls"},
+        {TOKEN_WORD, "-al"},
+        {TOKEN_PIPE, "|"},
+        {TOKEN_WORD, "cat.txt"},
+        {TOKEN_EMPTY, NULL}
     };
     verify_tokens("ls -al|cat.txt", expected2);
 }
@@ -124,23 +124,42 @@ void test_handlesPipes(void **state) {
 void test_handlesCapacity(void **state) {
     (void)state; // unused
     ExpectedToken expected[] = {
-        {Word, "ls"},
-        {Word, "-al"},
-        {Pipe, "|"},
-        {Word, "grep"},
-        {Word, "main.cpp"},
-        {Redirection, ">>"},
-        {Word, "a.txt"},
-        {Redirection, ">>"},
-        {Word, "b.txt"},
-        {Redirection, ">>"},
-        {Word, "c.txt"},
-        {Redirection, ">>"},
-        {Word, "d.txt"},
-        {Empty, NULL}
+        {TOKEN_WORD, "ls"},
+        {TOKEN_WORD, "-al"},
+        {TOKEN_PIPE, "|"},
+        {TOKEN_WORD, "grep"},
+        {TOKEN_WORD, "main.cpp"},
+        {TOKEN_REDIR, ">>"},
+        {TOKEN_WORD, "a.txt"},
+        {TOKEN_REDIR, ">>"},
+        {TOKEN_WORD, "b.txt"},
+        {TOKEN_REDIR, ">>"},
+        {TOKEN_WORD, "c.txt"},
+        {TOKEN_REDIR, ">>"},
+        {TOKEN_WORD, "d.txt"},
+        {TOKEN_EMPTY, NULL}
     };
     verify_tokens(
         "ls -al | grep main.cpp >> a.txt >> b.txt >> c.txt >> d.txt",
+        expected
+    );
+}
+
+void test_handlesSemicolons(void **state) {
+    (void)state;
+
+    ExpectedToken expected[] = {
+        {TOKEN_WORD, "ls"},
+        {TOKEN_WORD, "-al"},
+        {TOKEN_SEMICOLON, ";"},
+        {TOKEN_WORD, "cat"},
+        {TOKEN_WORD, "test.txt"},
+        {TOKEN_SEMICOLON, ";"},
+        {TOKEN_WORD, "vim"},
+        {TOKEN_WORD, "hello.txt"},
+    };
+    verify_tokens(
+        "ls -al; cat test.txt; vim hello.txt",
         expected
     );
 }

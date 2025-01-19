@@ -4,11 +4,12 @@
 #include <stdlib.h>
 
 typedef enum {
-    Word,
-    Redirection,
-    Pipe,
-    EndOfFile,
-    Empty,
+    TOKEN_WORD,
+    TOKEN_REDIR,
+    TOKEN_PIPE,
+    TOKEN_EOF,
+    TOKEN_EMPTY,
+    TOKEN_SEMICOLON,
 } TokenType;
 
 typedef struct {
