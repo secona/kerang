@@ -11,7 +11,7 @@ typedef struct {
     const char *value;
 } ExpectedToken;
 
-void verifyTokens(const char *input, ExpectedToken expected[]) {
+void verify_tokens(const char *input, ExpectedToken expected[]) {
     Tokenizer tokenizer = Tokenizer_new(input);
     Token token;
     size_t i = 0;
@@ -33,14 +33,14 @@ void test_handlesBasicWords(void **state) {
         {Word, "echo"},
         {Empty, NULL}
     };
-    verifyTokens("echo", expected);
+    verify_tokens("echo", expected);
 
     ExpectedToken expected2[] = {
         {Word, "cat"},
         {Word, "hello.txt"},
         {Empty, NULL}
     };
-    verifyTokens("cat hello.txt", expected2);
+    verify_tokens("cat hello.txt", expected2);
 }
 
 void test_handlesQuotedStrings(void **state) {
@@ -50,14 +50,14 @@ void test_handlesQuotedStrings(void **state) {
         {Word, "Hello, World!"},
         {Empty, NULL}
     };
-    verifyTokens("echo \"Hello, World!\"", expected);
+    verify_tokens("echo \"Hello, World!\"", expected);
 
     ExpectedToken expected2[] = {
         {Word, "echo"},
         {Word, ">>"},
         {Empty, NULL}
     };
-    verifyTokens("echo \">>\"", expected2);
+    verify_tokens("echo \">>\"", expected2);
 }
 
 void test_handlesRedirection(void **state) {
@@ -69,7 +69,7 @@ void test_handlesRedirection(void **state) {
         {Word, "test.txt"},
         {Empty, NULL}
     };
-    verifyTokens("ls -al >> test.txt", expected);
+    verify_tokens("ls -al >> test.txt", expected);
 
     ExpectedToken expected2[] = {
         {Word, "ls"},
@@ -78,7 +78,7 @@ void test_handlesRedirection(void **state) {
         {Word, "cat.txt"},
         {Empty, NULL}
     };
-    verifyTokens("ls -al>cat.txt", expected2);
+    verify_tokens("ls -al>cat.txt", expected2);
 
     ExpectedToken expected3[] = {
         {Word, "ls"},
@@ -87,7 +87,7 @@ void test_handlesRedirection(void **state) {
         {Word, "cat.txt"},
         {Empty, NULL}
     };
-    verifyTokens("ls -al 2>> cat.txt", expected3);
+    verify_tokens("ls -al 2>> cat.txt", expected3);
 
     ExpectedToken expected4[] = {
         {Word, "ls"},
@@ -96,7 +96,7 @@ void test_handlesRedirection(void **state) {
         {Word, "cat.txt"},
         {Empty, NULL}
     };
-    verifyTokens("ls -al2>> cat.txt", expected4);
+    verify_tokens("ls -al2>> cat.txt", expected4);
 }
 
 void test_handlesPipes(void **state) {
@@ -109,7 +109,7 @@ void test_handlesPipes(void **state) {
         {Word, "main.cpp"},
         {Empty, NULL}
     };
-    verifyTokens("ls -al | grep main.cpp", expected);
+    verify_tokens("ls -al | grep main.cpp", expected);
 
     ExpectedToken expected2[] = {
         {Word, "ls"},
@@ -118,7 +118,7 @@ void test_handlesPipes(void **state) {
         {Word, "cat.txt"},
         {Empty, NULL}
     };
-    verifyTokens("ls -al|cat.txt", expected2);
+    verify_tokens("ls -al|cat.txt", expected2);
 }
 
 void test_handlesCapacity(void **state) {
@@ -139,7 +139,7 @@ void test_handlesCapacity(void **state) {
         {Word, "d.txt"},
         {Empty, NULL}
     };
-    verifyTokens(
+    verify_tokens(
         "ls -al | grep main.cpp >> a.txt >> b.txt >> c.txt >> d.txt",
         expected
     );

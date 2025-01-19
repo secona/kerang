@@ -7,30 +7,47 @@
 #include <string.h>
 #include <cmocka.h>
 
-void test_handlesBasic(void **state) {
-    (void)state; // unused
-    const char *input = "ls";
+typedef struct {
+    int argc;
+    const char *args[256];
+} ExpectedCommands;
 
+void verify_commands(const char *input, ExpectedCommands expected[], int command_count) {
     Tokenizer tokenizer = Tokenizer_new(input);
     Command *commands = parse_commands(&tokenizer);
+    Command *command = (Command *)malloc(sizeof(Command));
+    int i = 0;
 
-    assert_int_equal(commands->argc, 1);
-    assert_string_equal(commands->args[0], "ls");
+    for (command = commands; command != NULL; command = command->next) {
+        assert_int_equal(command->argc, expected[i].argc);
+
+        for (int j = 0; j < command->argc; j++) {
+            assert_string_equal(command->args[j], expected[i].args[j]);
+        }
+
+        i++;
+    }
+
+    assert_int_equal(i, command_count);
+}
+
+void test_handlesBasic(void **state) {
+    (void)state; // unused
+
+    ExpectedCommands expected[] = {
+        {1, "ls"},
+    };
+    verify_commands("ls", expected, 1);
 }
 
 void test_handlesMultiple(void **state) {
     (void)state; // unused
-    const char *input = "ls | grep test.txt";
 
-    Tokenizer tokenizer = Tokenizer_new(input);
-    Command *commands = parse_commands(&tokenizer);
-
-    assert_int_equal(commands->argc, 1);
-    assert_string_equal(commands->args[0], "ls");
-
-    assert_int_equal(commands->next->argc, 2);
-    assert_string_equal(commands->next->args[0], "grep");
-    assert_string_equal(commands->next->args[1], "test.txt");
+    ExpectedCommands expected[] = {
+        {1, "ls"},
+        {2, "grep", "test.txt"}
+    };
+    verify_commands("ls | grep test.txt", expected, 2);
 }
 
 const struct CMUnitTest parser_tests[] = {
