@@ -25,6 +25,15 @@ Token Tokenizer_next(Tokenizer *tokenizer) {
 
     const char *start = tokenizer->ptr;
 
+    if (*tokenizer->ptr == '\n') {
+        tokenizer->ptr++;
+
+        token.type = TOKEN_NEWLINE;
+        token.value = malloc(tokenizer->ptr - start + 1);
+        memcpy(token.value, start, tokenizer->ptr - start);
+        return token;
+    }
+
     if (*tokenizer->ptr == ';') {
         tokenizer->ptr++;
 
@@ -87,7 +96,7 @@ Token Tokenizer_next(Tokenizer *tokenizer) {
         return token;
     }
 
-    while (!isspace(*tokenizer->ptr) && *tokenizer->ptr != 0 && *tokenizer->ptr != '>' && *tokenizer->ptr != '|')
+    while (!isspace(*tokenizer->ptr) && *tokenizer->ptr != 0 && *tokenizer->ptr != '>' && *tokenizer->ptr != '|' && *tokenizer->ptr != ';')
         tokenizer->ptr++;
 
     token.type = TOKEN_WORD;

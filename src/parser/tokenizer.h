@@ -10,6 +10,7 @@ typedef enum {
     TOKEN_EOF,
     TOKEN_EMPTY,
     TOKEN_SEMICOLON,
+    TOKEN_NEWLINE,
 } TokenType;
 
 typedef struct {

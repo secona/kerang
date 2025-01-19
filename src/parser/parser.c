@@ -21,12 +21,14 @@ Command *parse_commands(Tokenizer *tokenizer) {
             break;
 
         case TOKEN_PIPE:
+        case TOKEN_SEMICOLON:
+        case TOKEN_NEWLINE:
+        case TOKEN_EOF:
             current->next = (Command *)malloc(sizeof(Command));
             current = current->next;
             break;
 
         case TOKEN_EMPTY:
-        case TOKEN_EOF:
             return first;
         }
     }

@@ -20,6 +20,7 @@ void verify_commands(const char *input, ExpectedCommands expected[], int command
 
     for (command = commands; command != NULL; command = command->next) {
         assert_int_equal(command->argc, expected[i].argc);
+        assert_int_equal(command->args[command->argc], NULL);
 
         for (int j = 0; j < command->argc; j++) {
             assert_string_equal(command->args[j], expected[i].args[j]);
